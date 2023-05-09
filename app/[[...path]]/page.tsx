@@ -34,8 +34,6 @@ async function Test({ testId }: TestProps) {
     test = await writeClient.fetch('*[_type == "test" && _id == $testId][0]', {
       testId,
     })
-
-    await new Promise(resolve => setTimeout(resolve, 5000))
   }
 
   if (test?.result) {
