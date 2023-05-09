@@ -4,6 +4,7 @@ import { writeClient } from '@/sanity/lib/client'
 import stack from '@/components/stack.css'
 import textContainer from '@/components/text-container.css'
 import { Mode } from '@/types/state'
+import { TestSuiteResult } from '@/types/test'
 
 interface Props {
   params: {
@@ -22,38 +23,33 @@ export default async function Home({ params }: Props) {
   )
 }
 
+interface TestData {
+  user: {
+    firstName: string
+  }
+  result: string
+}
+
 interface TestProps {
   testId?: string
 }
 
 async function Test({ testId }: TestProps) {
-  let test: any
-  let result: any
-
-  if (testId) {
-    test = await writeClient.fetch('*[_type == "test" && _id == $testId][0]', {
-      testId,
-    })
-  }
-
-  if (test?.result) {
-    result = JSON.parse(test.result)
-  }
-
-  const mode = getMode(testId, test)
+  const { test, result } = await fetchTest(testId)
+  const mode = getMode(testId, { test, result })
 
   return (
     <>
       {mode === 'newTest' && (
         <p>
-          Welcome, {test.user.firstName}. This tool will run tests in your
+          Welcome, {test?.user.firstName}. This tool will run tests in your
           browser to check whether you&apos;re ready to use Sanity Studio. The
           results will automatically be shared with the Sanity team.
         </p>
       )}
       {mode === 'usedTest' && (
         <p>
-          Welcome, {test.user.firstName}. You have already completed the tests,
+          Welcome, {test?.user.firstName}. You have already completed the tests,
           and the results have been shared with the Sanity team.
         </p>
       )}
@@ -72,7 +68,8 @@ async function Test({ testId }: TestProps) {
       <TestRunner mode={mode} />
       {mode === 'usedTest' && (
         <p>
-          Test results submitted: {new Date(result.finishedAt).toLocaleString()}
+          Test results submitted:{' '}
+          {new Date(result?.finishedAt ?? 0).toLocaleString()}
         </p>
       )}
     </>
@@ -81,7 +78,7 @@ async function Test({ testId }: TestProps) {
 
 function getMode(
   testId: string | undefined,
-  test: any | null | undefined,
+  { test, result }: TestWithResult,
 ): Mode {
   if (typeof testId === 'undefined') {
     return 'guest'
@@ -91,9 +88,43 @@ function getMode(
     return 'invalidId'
   }
 
-  if (typeof test?.result === 'undefined') {
+  if (result === null) {
     return 'newTest'
   }
 
   return 'usedTest'
+}
+
+interface TestWithResult {
+  test: TestData | null
+  result: TestSuiteResult | null
+}
+
+async function fetchTest(testId: string | undefined): Promise<TestWithResult> {
+  if (typeof testId === 'undefined') {
+    return {
+      test: null,
+      result: null,
+    }
+  }
+
+  const test = await writeClient.fetch<TestData>(
+    `
+    *[_type == "test" && _id == $testId][0] {
+      user {
+        firstName
+      },
+      result
+    }
+  `,
+    {
+      testId,
+    },
+  )
+
+  return {
+    test,
+    result:
+      typeof test?.result !== 'undefined' ? JSON.parse(test.result) : null,
+  }
 }
