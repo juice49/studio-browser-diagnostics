@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import TestRunner from '@/components/test-runner'
-import { client } from '@/sanity/lib/client'
+import { writeClient } from '@/sanity/lib/client'
 import stack from '@/components/stack.css'
 import textContainer from '@/components/text-container.css'
 import { Mode } from '@/types/state'
@@ -31,13 +31,9 @@ async function Test({ testId }: TestProps) {
   let result: any
 
   if (testId) {
-    test = await client
-      .withConfig({
-        token: process.env.SANITY_WRITE_API_TOKEN,
-      })
-      .fetch('*[_type == "test" && _id == $testId][0]', {
-        testId,
-      })
+    test = await writeClient.fetch('*[_type == "test" && _id == $testId][0]', {
+      testId,
+    })
 
     await new Promise(resolve => setTimeout(resolve, 5000))
   }
