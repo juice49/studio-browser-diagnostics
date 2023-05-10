@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { writeClient } from '@/sanity/lib/client'
 import { TestSuiteResult } from '@/types/test'
 
@@ -13,4 +14,6 @@ export default async function saveTestResult(
       result: JSON.stringify(result),
     })
     .commit()
+
+  revalidatePath(testId)
 }

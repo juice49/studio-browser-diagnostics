@@ -23,6 +23,8 @@ export default async function Home({ params }: Props) {
   )
 }
 
+export const revalidate = 3600
+
 interface TestData {
   user: {
     firstName: string

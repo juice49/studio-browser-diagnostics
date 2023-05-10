@@ -1,6 +1,6 @@
 'use client'
 
-import { ComponentType, useState } from 'react'
+import { ComponentType, useState, useTransition } from 'react'
 import runTestSuite from '@/lib/run-test-suite'
 import singleServerSentEvent from '@/tests/single-server-sent-event'
 import multipleServerSentEvents from '@/tests/multiple-server-sent-events'
@@ -15,6 +15,8 @@ interface Props {
 }
 
 const TestRunner: ComponentType<Props> = ({ mode, testId }) => {
+  const [, startTransition] = useTransition()
+
   const [state, setState] = useState<'notStarted' | 'running' | 'completed'>(
     'notStarted',
   )
@@ -37,16 +39,17 @@ const TestRunner: ComponentType<Props> = ({ mode, testId }) => {
 
           setResult(result)
 
-          if (testId) {
-            try {
-              await saveResult(testId, result)
-            } catch (error) {
-              setState('notStarted')
-              return
+          startTransition(async () => {
+            if (typeof testId !== 'undefined') {
+              try {
+                saveResult(testId, result)
+              } catch (error) {
+                setState('notStarted')
+              }
             }
-          }
 
-          setState('completed')
+            setState('completed')
+          })
         }}
       >
         {state === 'notStarted' && 'Run tests'}
