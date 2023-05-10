@@ -42,6 +42,7 @@ const TestRunner: ComponentType<Props> = ({ mode, testId }) => {
               await saveResult(testId, result)
             } catch (error) {
               setState('notStarted')
+              return
             }
           }
 
