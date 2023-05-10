@@ -27,6 +27,7 @@ export default async function Home({ params }: Props) {
 export const revalidate = 3600
 export const dynamic = 'force-static'
 export const fetchCache = 'only-cache'
+export const runtime = 'edge'
 
 // export function generateStaticParams() {
 //   return [
