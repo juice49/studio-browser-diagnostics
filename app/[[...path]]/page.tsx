@@ -25,8 +25,8 @@ export default async function Home({ params }: Props) {
 }
 
 export const revalidate = 60
-export const dynamic = 'force-static'
-export const fetchCache = 'only-cache'
+// export const dynamic = 'force-static'
+// export const fetchCache = 'only-cache'
 
 export function generateStaticParams() {
   return [
