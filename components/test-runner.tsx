@@ -10,10 +10,11 @@ import button from '@/components/button.css'
 import { Mode } from '@/types/state'
 
 interface Props {
+  testId?: string
   mode: Mode
 }
 
-const TestRunner: ComponentType<Props> = ({ mode }) => {
+const TestRunner: ComponentType<Props> = ({ mode, testId }) => {
   const [state, setState] = useState<'notStarted' | 'running' | 'completed'>(
     'notStarted',
   )
@@ -36,10 +37,12 @@ const TestRunner: ComponentType<Props> = ({ mode }) => {
 
           setResult(result)
 
-          try {
-            await saveResult('caa56aaa-fd27-4bac-9010-9c6f2421f95c', result)
-          } catch (error) {
-            setState('notStarted')
+          if (testId) {
+            try {
+              await saveResult(testId, result)
+            } catch (error) {
+              setState('notStarted')
+            }
           }
 
           setState('completed')

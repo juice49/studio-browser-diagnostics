@@ -65,7 +65,7 @@ async function Test({ testId }: TestProps) {
           results will not automatically be shared with the Sanity team.
         </p>
       )}
-      <TestRunner mode={mode} />
+      <TestRunner testId={testId} mode={mode} />
       {mode === 'usedTest' && (
         <p>
           Test results submitted:{' '}
