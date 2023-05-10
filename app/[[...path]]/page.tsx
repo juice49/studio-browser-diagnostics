@@ -17,6 +17,7 @@ export default async function Home({ params }: Props) {
 
   return (
     <main className={classNames([stack({ size: 'large' }), textContainer()])}>
+      <p>generated at: {Date.now()}</p>
       {/* @ts-expect-error async server component */}
       <Test testId={testId} />
     </main>
