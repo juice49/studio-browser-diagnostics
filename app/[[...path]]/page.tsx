@@ -27,6 +27,14 @@ export default async function Home({ params }: Props) {
 export const revalidate = 3600
 export const dynamic = 'force-static'
 
+export function generateStaticParams() {
+  return [
+    {
+      path: ['5e2b94d4-856f-43fe-ab1b-761429387095'],
+    },
+  ]
+}
+
 interface TestData {
   user: {
     firstName: string
