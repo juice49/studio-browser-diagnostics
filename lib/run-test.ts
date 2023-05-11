@@ -71,7 +71,9 @@ function createResultHandler(
   }
 }
 
-function getSimpleError(error: Error | undefined): SimpleError | undefined {
+export function getSimpleError(
+  error: Error | undefined,
+): SimpleError | undefined {
   if (error) {
     return {
       name: error.name,
