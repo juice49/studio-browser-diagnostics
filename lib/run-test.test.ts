@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { Test, TestResultStatus, TestResult } from '@/types/test'
 import runTest, { getSimpleError } from './run-test'
