@@ -1,8 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { Test, TestResultStatus, TestResult } from '@/types/test'
 import runTest, { getSimpleError } from './run-test'
+
+beforeEach(() => {
+  vi.useFakeTimers({
+    shouldAdvanceTime: true,
+  })
+
+  return vi.useRealTimers
+})
 
 const succeedingTest: Test = {
   name: 'Succeeding Test',
@@ -99,14 +107,6 @@ describe('runTest', () => {
     const testError = new Error('Test error')
 
     later.setHours(now.getHours() + 1)
-
-    beforeAll(() => {
-      vi.useFakeTimers()
-    })
-
-    afterAll(() => {
-      vi.useRealTimers()
-    })
 
     const succeedingTest: Test = {
       name: 'Succeeding Test',
