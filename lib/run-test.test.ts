@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest'
 import { Test, TestResultStatus, TestResult } from '@/types/test'
 import runTest, { getSimpleError } from './run-test'
 
@@ -98,13 +98,14 @@ describe('runTest', () => {
     const later = new Date()
     const testError = new Error('Test error')
 
+    later.setHours(now.getHours() + 1)
+
     beforeAll(() => {
       vi.useFakeTimers()
-      vi.setSystemTime(now)
+    })
 
-      return () => {
-        vi.useRealTimers()
-      }
+    afterAll(() => {
+      vi.useRealTimers()
     })
 
     const succeedingTest: Test = {
@@ -134,14 +135,9 @@ describe('runTest', () => {
       },
     }
 
-    const [succeedingTestData, failingTestData, erroringTestData] =
-      await Promise.all([
-        runTest(succeedingTest),
-        runTest(failingTest),
-        runTest(erroringTest),
-      ])
+    vi.setSystemTime(now)
 
-    expect(succeedingTestData).toEqual<TestResult>({
+    expect(await runTest(succeedingTest)).toEqual<TestResult>({
       name: 'Succeeding Test',
       version: 1,
       status: 'success',
@@ -151,7 +147,9 @@ describe('runTest', () => {
       metadata: undefined,
     })
 
-    expect(failingTestData).toEqual<TestResult>({
+    vi.setSystemTime(now)
+
+    expect(await runTest(failingTest)).toEqual<TestResult>({
       name: 'Failing Test',
       version: 1,
       status: 'failure',
@@ -161,7 +159,9 @@ describe('runTest', () => {
       metadata: undefined,
     })
 
-    expect(erroringTestData).toEqual<TestResult>({
+    vi.setSystemTime(now)
+
+    expect(await runTest(erroringTest)).toEqual<TestResult>({
       name: 'Erroring Test',
       version: 1,
       status: 'failure',
