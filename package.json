@@ -34,7 +34,6 @@
     "@vitest/browser": "^0.31.0",
     "prettier": "^2.8.8",
     "vitest": "^0.31.0",
-    "webdriverio": "^8.10.2",
-    "webpack": "5.74.0"
+    "webdriverio": "^8.10.2"
   }
 }
