@@ -39,7 +39,7 @@ const test = defineType({
       name: 'result',
       title: 'Result',
       type: 'string',
-      readOnly: true,
+      // readOnly: true,
     }),
   ],
   components: {

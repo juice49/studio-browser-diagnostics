@@ -5,7 +5,7 @@ import runTestSuite from '@/lib/run-test-suite'
 import singleServerSentEvent from '@/tests/single-server-sent-event'
 import multipleServerSentEvents from '@/tests/multiple-server-sent-events'
 import localStorageReadWrite from '@/tests/localstorage-read-write'
-import saveResult from '@/app/save-test-result'
+//import saveResult from '@/app/save-test-result'
 import button from '@/components/button.css'
 import { Mode } from '@/types/state'
 
@@ -42,7 +42,13 @@ const TestRunner: ComponentType<Props> = ({ mode, testId }) => {
           startTransition(async () => {
             if (typeof testId !== 'undefined') {
               try {
-                saveResult(testId, result)
+                // saveResult(testId, result)
+                const response = await fetch(`/test/${testId}`, {
+                  method: 'put',
+                  body: JSON.stringify(result),
+                })
+                const responseData = await response.json()
+                console.log('[SAVED]', responseData)
               } catch (error) {
                 setState('notStarted')
               }

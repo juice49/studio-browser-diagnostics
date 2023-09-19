@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import classNames from 'classnames'
 import TestRunner from '@/components/test-runner'
 import { writeClient } from '@/sanity/lib/client'
@@ -17,7 +18,7 @@ export default async function Home({ params }: Props) {
 
   return (
     <main className={classNames([stack({ size: 'large' }), textContainer()])}>
-      <p>generated at: {Date.now()}</p>
+      <p>INNER generated at: {Date.now()}</p>
       {/* @ts-expect-error async server component */}
       <Test testId={testId} />
     </main>
@@ -25,15 +26,9 @@ export default async function Home({ params }: Props) {
 }
 
 export const revalidate = 60
-// export const dynamic = 'force-static'
-// export const fetchCache = 'only-cache'
 
 export function generateStaticParams() {
-  return [
-    /* {
-      path: ['5e2b94d4-856f-43fe-ab1b-761429387095'],
-    }, */
-  ]
+  return []
 }
 
 interface TestData {
@@ -113,16 +108,20 @@ interface TestWithResult {
   result: TestSuiteResult | null
 }
 
-async function fetchTest(testId: string | undefined): Promise<TestWithResult> {
-  if (typeof testId === 'undefined') {
-    return {
-      test: null,
-      result: null,
-    }
-  }
+const _cache = (fn: any) => fn
 
-  const test = await writeClient.fetch<TestData>(
-    `
+// async function fetchTest(testId: string | undefined): Promise<TestWithResult> {
+const fetchTest = _cache(
+  async (testId: string | undefined): Promise<TestWithResult> => {
+    if (typeof testId === 'undefined') {
+      return {
+        test: null,
+        result: null,
+      }
+    }
+
+    const test = await writeClient.fetch<TestData>(
+      `
     *[_type == "test" && _id == $testId][0] {
       user {
         firstName
@@ -130,14 +129,15 @@ async function fetchTest(testId: string | undefined): Promise<TestWithResult> {
       result
     }
   `,
-    {
-      testId,
-    },
-  )
+      {
+        testId,
+      },
+    )
 
-  return {
-    test,
-    result:
-      typeof test?.result !== 'undefined' ? JSON.parse(test.result) : null,
-  }
-}
+    return {
+      test,
+      result:
+        typeof test?.result !== 'undefined' ? JSON.parse(test.result) : null,
+    }
+  },
+)

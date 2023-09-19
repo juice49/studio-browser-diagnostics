@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "test:build": "vite build"
   },
   "dependencies": {
     "@sanity/icons": "^2.3.1",

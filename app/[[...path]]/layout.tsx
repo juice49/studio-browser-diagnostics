@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang='en' className={themeClass}>
       <body className={stack({ size: 'large' })}>
         <header>
-          <p>generated at: {Date.now()}</p>
+          <p>OUTER generated at: {Date.now()}</p>
           <PlugIcon fontSize={50} />
           <h1>Studio Browser Diagnostics</h1>
         </header>
