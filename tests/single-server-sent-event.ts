@@ -5,7 +5,7 @@ import createServerSentEventTest, {
   FailureMetadata,
 } from './lib/create-server-sent-event-test'
 
-const SSE_URL = 'https://sse-test.deno.dev'
+const SSE_URL = 'https://sse-test-8txde9qavbsa.sse-test.deno.net/'
 const TIMEOUT = 5_000
 
 const singleServerSentEvent: Test<SuccessMetadata, FailureMetadata> = {
